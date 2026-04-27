@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>WOS 전투 최적화 계산기</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <link rel="stylesheet" href="style.css">
 
   <!-- Chart.js -->
@@ -13,7 +12,7 @@
 <body>
 
 <h1>🔥 WOS 전투 최적화 계산기</h1>
-<p class="subtitle">실제 스탯 기반 · 영웅 효과 반영 · 서버 없음</p>
+<p class="subtitle">실제 게임 최종 스탯 입력 → 최적 병종 비율 & 영웅 판단</p>
 
 <section class="card">
   <label>
@@ -22,7 +21,7 @@
   </label>
 </section>
 
-<!-- 아군 -->
+<!-- ================= 아군 ================= -->
 <section class="card">
   <h2>아군</h2>
 
@@ -31,18 +30,22 @@
     <input id="our_total" placeholder="예: 1200000">
   </label>
 
-  <h3>아군 병종별 스탯 (%)</h3>
+  <h3>아군 병종별 최종 스탯 (%)</h3>
   <div class="grid">
     <div class="branch">
       <h4>방패병</h4>
       <input id="our_shield_atk" placeholder="공격력">
-      <input id="our_shield_hp" placeholder="HP">
+      <input id="our_shield_def" placeholder="방어력">
+      <input id="our_shield_pow" placeholder="파괴력">
+      <input id="our_shield_hp"  placeholder="HP">
       <select id="our_shield_hero"></select>
     </div>
 
     <div class="branch">
       <h4>창병</h4>
       <input id="our_spear_atk">
+      <input id="our_spear_def">
+      <input id="our_spear_pow">
       <input id="our_spear_hp">
       <select id="our_spear_hero"></select>
     </div>
@@ -50,21 +53,25 @@
     <div class="branch">
       <h4>궁병</h4>
       <input id="our_archer_atk">
+      <input id="our_archer_def">
+      <input id="our_archer_pow">
       <input id="our_archer_hp">
       <select id="our_archer_hero"></select>
     </div>
   </div>
 </section>
 
-<!-- 적 -->
+<!-- ================= 적 ================= -->
 <section class="card">
   <h2>적</h2>
 
-  <h3>적 병종별 스탯 (%)</h3>
+  <h3>적 병종별 최종 스탯 (%)</h3>
   <div class="grid">
     <div class="branch">
       <h4>방패병</h4>
       <input id="enemy_shield_atk">
+      <input id="enemy_shield_def">
+      <input id="enemy_shield_pow">
       <input id="enemy_shield_hp">
       <select id="enemy_shield_hero"></select>
     </div>
@@ -72,6 +79,8 @@
     <div class="branch">
       <h4>창병</h4>
       <input id="enemy_spear_atk">
+      <input id="enemy_spear_def">
+      <input id="enemy_spear_pow">
       <input id="enemy_spear_hp">
       <select id="enemy_spear_hero"></select>
     </div>
@@ -79,6 +88,8 @@
     <div class="branch">
       <h4>궁병</h4>
       <input id="enemy_archer_atk">
+      <input id="enemy_archer_def">
+      <input id="enemy_archer_pow">
       <input id="enemy_archer_hp">
       <select id="enemy_archer_hero"></select>
     </div>
