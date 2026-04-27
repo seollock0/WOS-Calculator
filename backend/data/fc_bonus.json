@@ -1,0 +1,38 @@
+{
+  "7": {
+    "atk": 22,
+    "def": 16,
+    "hp": 15,
+    "pow": 21,
+    "atk_pct": 0.0,
+    "extra_hit_chance": 0.0,
+    "extra_hit_multiplier": 0.0
+  },
+  "8": {
+    "atk": 23,
+    "def": 17,
+    "hp": 15,
+    "pow": 22,
+    "atk_pct": 0.04,
+    "extra_hit_chance": 0.20,
+    "extra_hit_multiplier": 0.75
+  },
+  "9": {
+    "atk": 25,
+    "def": 17,
+    "hp": 16,
+    "pow": 22,
+    "atk_pct": 0.0,
+    "extra_hit_chance": 0.0,
+    "extra_hit_multiplier": 0.0
+  },
+  "10": {
+    "atk": 26,
+    "def": 19,
+    "hp": 17,
+    "pow": 24,
+    "atk_pct": 0.06,
+    "extra_hit_chance": 0.20,
+    "extra_hit_multiplier": 0.875
+  }
+}
