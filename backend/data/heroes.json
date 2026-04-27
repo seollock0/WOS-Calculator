@@ -1,0 +1,30 @@
+{
+  "제로니모": {
+    "attack": 1.56,
+    "survive": 1.15
+  },
+  "에디스": {
+    "attack": 1.05,
+    "survive": 1.30
+  },
+  "레니": {
+    "attack": 2.00,
+    "survive": 1.00
+  },
+  "미아": {
+    "attack": 1.50,
+    "survive": 1.20
+  },
+  "고든": {
+    "attack": 1.10,
+    "survive": 1.10
+  },
+  "브래들리": {
+    "attack": 1.70,
+    "survive": 1.00
+  },
+  "웨인": {
+    "attack": 1.40,
+    "survive": 1.00
+  }
+}
