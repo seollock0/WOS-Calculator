@@ -1,34 +1,139 @@
 {
   "shield": {
-    "제로니모": {
-      "skills": {
-        "attack_pct": 0.25,
-        "damage_pct": 0.25,
-        "hp_pct": 0.15,
-        "damage_proc": { "chance": 0.3, "effect": 0.3, "uptime": 0.5 }
-      }
-    },
     "에디스": {
       "skills": {
+        "attack_pct": 6.5052,
+        "defense_pct": 6.5052,
         "hp_pct": 0.25,
-        "damage_reduce_pct": 0.2
+        "damage_reduce_pct": 0.20,
+        "party_effects": {
+          "spear_damage_pct": 0.20,
+          "archer_damage_reduce_pct": 0.20
+        },
+        "exclusive_weapon": {
+          "defense_only": {
+            "hp_pct": 0.15
+          }
+        }
+      }
+    },
+
+    "제로니모": {
+      "skills": {
+        "attack_pct": 2.6020,
+        "defense_pct": 2.6020,
+        "global_damage_pct": 0.25,
+        "global_attack_pct": 0.25,
+        "damage_proc": {
+          "chance": 0.25,
+          "effect": 0.30,
+          "uptime": 0.50
+        },
+        "exclusive_weapon": {
+          "global_hp_pct": 0.15,
+          "global_destroy_pct": 0.15
+        }
       }
     }
   },
+
   "spear": {
+    "미아": {
+      "skills": {
+        "attack_pct": 2.9023,
+        "defense_pct": 2.9023,
+        "global_damage_pct": 0.50,
+        "damage_proc": {
+          "chance": 0.50,
+          "effect": 0.50,
+          "uptime": 1.00
+        },
+        "global_damage_reduce_pct": {
+          "chance": 0.40,
+          "effect": 0.50
+        },
+        "exclusive_weapon": {
+          "rally_attack_pct": 0.15
+        }
+      }
+    },
+
     "레니": {
       "skills": {
-        "attack_pct": 0.54,
-        "target_damage_pct": 1.5,
-        "global_damage_pct": 0.75
+        "attack_pct": 5.4043,
+        "defense_pct": 5.4043,
+        "target_damage_pct": 1.50,
+        "global_damage_pct": 0.75,
+        "extra_hit_proc": {
+          "interval": 2,
+          "effect": 2.00,
+          "uptime": 0.50
+        },
+        "exclusive_weapon": {
+          "rally_destroy_pct": 0.15
+        }
+      }
+    },
+
+    "고든": {
+      "skills": {
+        "attack_pct": 6.5052,
+        "defense_pct": 6.5052,
+        "poison_proc": {
+          "chance": 1.00,
+          "effect": 1.00,
+          "damage_reduce_pct": 0.20
+        },
+        "periodic_buff": {
+          "interval": 3,
+          "damage_pct": 0.30,
+          "global_enemy_damage_reduce_pct": 0.06
+        },
+        "vs_shield_damage_pct": 0.30,
+        "vs_archer_damage_reduce_pct": 0.30
       }
     }
   },
+
   "archer": {
     "브래들리": {
       "skills": {
-        "attack_pct": 0.25,
-        "damage_proc": { "chance": 1, "effect": 0.3, "uptime": 0.2 }
+        "attack_pct": 6.5052,
+        "defense_pct": 6.5052,
+        "global_attack_pct": 0.25,
+        "vs_spear_damage_pct": 0.30,
+        "vs_shield_damage_pct": 0.25,
+        "damage_proc": {
+          "chance": 0.30,
+          "effect": 0.30,
+          "uptime": 0.50
+        },
+        "exclusive_weapon": {
+          "defense_only_attack_pct": 0.15
+        }
+      }
+    },
+
+    "웨인": {
+      "skills": {
+        "attack_pct": 5.4043,
+        "defense_pct": 5.4043,
+        "extra_hit_proc": {
+          "interval": 4,
+          "effect": 1.00,
+          "uptime": 0.25
+        },
+        "conditional_damage": {
+          "vs_spear": 0.40,
+          "vs_archer": 0.20
+        },
+        "crit_proc": {
+          "chance": 0.25,
+          "effect": 1.00
+        },
+        "exclusive_weapon": {
+          "defense_only_destroy_pct": 0.15
+        }
       }
     }
   }
