@@ -4,12 +4,10 @@
   <meta charset="UTF-8" />
   <title>WOS 전투 최적화 계산기</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  style.css
-</head>
-<body>
 
-<h1>🔥 WOS 전투 최적화 계산기</h1>
-<p class="subtitle">총 병사 수 입력 → 최적 병종 비율 & 영웅 자동 산출</p>
+  <!-- ✅ CSS 정상 로드 -->
+  <link rel="stylesheet" href="styleOS 전투 최적화 계산기</h1>
+<p class="subtitle">총 병사 수 입력 → 최적 병종 비율 & 영웅 자동 계산</p>
 
 <!-- 전투 조건 -->
 <section class="card">
@@ -20,7 +18,7 @@
   </label>
 </section>
 
-<!-- 아군 -->
+<!-- 아군 입력 -->
 <section class="card">
   <h2>아군 병력</h2>
 
@@ -35,55 +33,15 @@
       <h4>방패병</h4>
       <select id="our_shield_hero"></select>
     </div>
+
     <div class="branch">
       <h4>창병</h4>
       <select id="our_spear_hero"></select>
     </div>
+
     <div class="branch">
       <h4>궁병</h4>
       <select id="our_archer_hero"></select>
-    </div>
-  </div>
-</section>
-
-<!-- 적 -->
-<section class="card">
-  <h2>적 병력</h2>
-
-  <label>
-    적 병사 수
-    <input id="enemy_total_count" type="number" placeholder="예: 900000">
-  </label>
-
-  <label>
-    단계
-    <input id="enemy_tier" type="number" placeholder="예: 11">
-  </label>
-
-  <label>
-    FC
-    <input id="enemy_fc" type="number" placeholder="예: 8">
-  </label>
-
-  <h3>병종별 계수 입력</h3>
-  <div class="grid">
-    <div class="branch">
-      <h4>방패병</h4>
-      <input id="enemy_shield_atk" type="number" placeholder="공격력%">
-      <input id="enemy_shield_def" type="number" placeholder="방어력%">
-      <input id="enemy_shield_hp" type="number" placeholder="HP%">
-    </div>
-    <div class="branch">
-      <h4>창병</h4>
-      <input id="enemy_spear_atk" type="number" placeholder="공격력%">
-      <input id="enemy_spear_def" type="number" placeholder="방어력%">
-      <input id="enemy_spear_hp" type="number" placeholder="HP%">
-    </div>
-    <div class="branch">
-      <h4>궁병</h4>
-      <input id="enemy_archer_atk" type="number" placeholder="공격력%">
-      <input id="enemy_archer_def" type="number" placeholder="방어력%">
-      <input id="enemy_archer_hp" type="number" placeholder="HP%">
     </div>
   </div>
 </section>
@@ -93,13 +51,15 @@
 <!-- 결과 -->
 <section class="card" id="resultBox" hidden>
   <h2>✅ 계산 결과</h2>
+
   <div id="resultHeroes"></div>
   <div id="resultRatio"></div>
   <div id="resultCounts"></div>
   <div id="resultVerdict"></div>
+
   <pre id="resultSummary"></pre>
 </section>
 
-app.js>
-</body>
+<!-- ✅ JS는 body 맨 아래에서 로드 -->
+<script src="app.jsbody>
 </html>
