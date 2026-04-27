@@ -4,21 +4,20 @@
   <meta charset="UTF-8" />
   <title>WOS 전투 최적화 계산기</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-  <!-- ✅ CSS 정상 로드 -->
-  <link rel="stylesheet" href="styleOS 전투 최적화 계산기</h1>
+<h1>🔥 WOS 전투 최적화 계산기</h1>
 <p class="subtitle">총 병사 수 입력 → 최적 병종 비율 & 영웅 자동 계산</p>
 
-<!-- 전투 조건 -->
 <section class="card">
-  <h2>전투 조건</h2>
   <label>
     <input type="checkbox" id="enemyDefense" checked>
     적이 수성 중인가요?
   </label>
 </section>
 
-<!-- 아군 입력 -->
 <section class="card">
   <h2>아군 병력</h2>
 
@@ -33,12 +32,10 @@
       <h4>방패병</h4>
       <select id="our_shield_hero"></select>
     </div>
-
     <div class="branch">
       <h4>창병</h4>
       <select id="our_spear_hero"></select>
     </div>
-
     <div class="branch">
       <h4>궁병</h4>
       <select id="our_archer_hero"></select>
@@ -48,18 +45,15 @@
 
 <button id="calcBtn">🚀 계산 실행</button>
 
-<!-- 결과 -->
 <section class="card" id="resultBox" hidden>
   <h2>✅ 계산 결과</h2>
-
   <div id="resultHeroes"></div>
   <div id="resultRatio"></div>
   <div id="resultCounts"></div>
   <div id="resultVerdict"></div>
-
   <pre id="resultSummary"></pre>
 </section>
 
-<!-- ✅ JS는 body 맨 아래에서 로드 -->
-<script src="app.jsbody>
+<script src="app.js"></script>
+</body>
 </html>
