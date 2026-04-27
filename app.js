@@ -1,177 +1,93 @@
-/*************************************************
- *  WOS 전투 최적화 계산기 (Client-Only)
- *  - 서버 없음
- *  - GitHub Pages에서 바로 동작
- *************************************************/
+const BRANCHES = ["shield","spear","archer"];
+let HEROES = {};
 
-const BRANCHES = ["shield", "spear", "archer"];
-let HEROES = {}; // heroes.json 로드됨
+function el(id) {
+  return Number(document.getElementById(id).value || 0);
+}
 
-/*************************************************
- * 1. heroes.json 로드 + 드롭다운 세팅
- *************************************************/
 async function loadHeroes() {
   const res = await fetch("heroes.json");
   HEROES = await res.json();
-
-  fillHeroDropdown("our_shield_hero", "shield");
-  fillHeroDropdown("our_spear_hero", "spear");
-  fillHeroDropdown("our_archer_hero", "archer");
 }
 
-function fillHeroDropdown(selectId, branch) {
-  const sel = document.getElementById(selectId);
-  sel.innerHTML = "";
+function branchPower(stats) {
+  // 공격 * 파괴력 / HP 단순화 모델
+  return (stats.atk * stats.pow) / stats.hp;
+}
 
-  Object.keys(HEROES[branch]).forEach(hero => {
-    const opt = document.createElement("option");
-    opt.value = hero;
-    opt.textContent = hero;
-    sel.appendChild(opt);
+function teamPower(ratio, branchStats, heroMult, totalSoldiers) {
+  let atk = 0, hp = 0;
+  BRANCHES.forEach(b=>{
+    atk += ratio[b] * branchStats[b] * heroMult[b];
+    hp  += ratio[b];
   });
+  return Math.sqrt(totalSoldiers) * atk / hp;
 }
 
-/*************************************************
- * 2. 영웅 계수 계산 (heroes.py 포팅)
- *************************************************/
-function calcAttackMultiplier(skills) {
-  let atk = 1.0;
+function optimize(data) {
+  let best={score:0};
 
-  atk += skills.attack_pct || 0;
-  atk *= 1 + (skills.damage_pct || 0);
-  atk *= 1 + (skills.target_damage_pct || 0);
-  atk *= 1 + (skills.global_damage_pct || 0);
+  BRANCHES.forEach(()=>{});
 
-  if (skills.damage_proc) {
-    const p = skills.damage_proc;
-    const expected = (p.chance || 0) * (p.effect || 0) * (p.uptime || 0);
-    atk *= 1 + expected;
-  }
-  return atk;
-}
+  for(let r=0;r<=1;r+=0.01){
+    for(let s=0;s<=1-r;s+=0.01){
+      let a=1-r-s;
+      let ratio={shield:r,spear:s,archer:a};
 
-function calcSurviveMultiplier(skills) {
-  let s = 1.0;
-  s += skills.hp_pct || 0;
-  s *= 1 + (skills.damage_reduce_pct || 0);
-  return s;
-}
+      let our = teamPower(ratio,data.ourStats,{shield:1,spear:1,archer:1},data.ourTotal);
+      let enemy = teamPower(ratio,data.enemyStats,{shield:1,spear:1,archer:1},data.enemyTotal);
 
-/*************************************************
- * 3. 전투 점수 계산 (battle.py 포팅)
- *************************************************/
-function battleScore(ratio, heroMult, totalSoldiers, enemyIsDefense) {
-  let atkSum = 0, survSum = 0;
+      if(data.enemyDefense) enemy*=1.15;
+      let score=our/enemy;
 
-  BRANCHES.forEach(b => {
-    atkSum += ratio[b] * heroMult[b].attack;
-    survSum += ratio[b] * heroMult[b].survive;
-  });
-
-  let score = Math.sqrt(totalSoldiers) * atkSum / survSum;
-
-  if (enemyIsDefense) score /= 1.15;
-  return score;
-}
-
-/*************************************************
- * 4. 최적 조합 탐색 (optimizer.py 포팅)
- *    - 영웅 자동 탐색
- *    - 비율 1% 고정
- *************************************************/
-function optimize(totalSoldiers, enemyIsDefense) {
-  let best = { score: 0 };
-
-  const sh = Object.keys(HEROES.shield);
-  const sp = Object.keys(HEROES.spear);
-  const ar = Object.keys(HEROES.archer);
-
-  for (const h1 of sh)
-  for (const h2 of sp)
-  for (const h3 of ar) {
-
-    const heroMult = {
-      shield: {
-        attack: calcAttackMultiplier(HEROES.shield[h1].skills),
-        survive: calcSurviveMultiplier(HEROES.shield[h1].skills)
-      },
-      spear: {
-        attack: calcAttackMultiplier(HEROES.spear[h2].skills),
-        survive: calcSurviveMultiplier(HEROES.spear[h2].skills)
-      },
-      archer: {
-        attack: calcAttackMultiplier(HEROES.archer[h3].skills),
-        survive: calcSurviveMultiplier(HEROES.archer[h3].skills)
-      }
-    };
-
-    for (let r = 0; r <= 1; r += 0.01) {
-      for (let s = 0; s <= 1 - r; s += 0.01) {
-        const a = 1 - r - s;
-
-        const ratio = { shield: r, spear: s, archer: a };
-        const score = battleScore(ratio, heroMult, totalSoldiers, enemyIsDefense);
-
-        if (score > best.score) {
-          best = {
-            score,
-            ratio,
-            heroes: { shield: h1, spear: h2, archer: h3 }
-          };
-        }
+      if(score>best.score){
+        best={score,ratio};
       }
     }
   }
   return best;
 }
 
-/*************************************************
- * 5. UI 이벤트
- *************************************************/
-document.addEventListener("DOMContentLoaded", () => {
-  loadHeroes();
+document.addEventListener("DOMContentLoaded", async ()=>{
+  await loadHeroes();
 
-  document.getElementById("calcBtn").onclick = () => {
-    const total = Number(document.getElementById("our_total_count").value);
-    const enemyDef = document.getElementById("enemyDefense").checked;
+  document.getElementById("calcBtn").onclick=()=>{
+    const data={
+      enemyDefense:document.getElementById("enemyDefense").checked,
+      ourTotal:el("our_total_count"),
+      enemyTotal:
+        el("enemy_shield_count")+el("enemy_spear_count")+el("enemy_archer_count"),
+      ourStats:{
+        shield:branchPower({
+          atk:el("our_shield_atk"),hp:el("our_shield_hp"),pow:el("our_shield_pow")
+        }),
+        spear:branchPower({
+          atk:el("our_spear_atk"),hp:el("our_spear_hp"),pow:el("our_spear_pow")
+        }),
+        archer:branchPower({
+          atk:el("our_archer_atk"),hp:el("our_archer_hp"),pow:el("our_archer_pow")
+        })
+      },
+      enemyStats:{
+        shield:branchPower({
+          atk:el("enemy_shield_atk"),hp:el("enemy_shield_hp"),pow:el("enemy_shield_pow")
+        }),
+        spear:branchPower({
+          atk:el("enemy_spear_atk"),hp:el("enemy_spear_hp"),pow:el("enemy_spear_pow")
+        }),
+        archer:branchPower({
+          atk:el("enemy_archer_atk"),hp:el("enemy_archer_hp"),pow:el("enemy_archer_pow")
+        })
+      }
+    };
 
-    if (!total || total <= 0) {
-      alert("총 병사 수를 입력하세요.");
-      return;
-    }
+    const res=optimize(data);
+    const resultBox=document.getElementById("resultBox");
+    resultBox.hidden=false;
 
-    const result = optimize(total, enemyDef);
-    renderResult(result, total);
+    document.getElementById("result").innerText=
+      `최적 병종 비율\n방패 ${(res.ratio.shield*100).toFixed(1)}%\n`+
+      `창 ${(res.ratio.spear*100).toFixed(1)}%\n궁 ${(res.ratio.archer*100).toFixed(1)}%\n`+
+      `점수 ${res.score.toFixed(2)}`;
   };
 });
-
-/*************************************************
- * 6. 결과 출력
- *************************************************/
-function renderResult(res, total) {
-  document.getElementById("resultBox").hidden = false;
-
-  document.getElementById("resultHeroes").innerText =
-    `영웅 조합\n방패: ${res.heroes.shield}\n창: ${res.heroes.spear}\n궁: ${res.heroes.archer}`;
-
-  document.getElementById("resultRatio").innerText =
-    `병종 비율\n방패 ${(res.ratio.shield*100).toFixed(1)}%\n` +
-    `창 ${(res.ratio.spear*100).toFixed(1)}%\n` +
-    `궁 ${(res.ratio.archer*100).toFixed(1)}%`;
-
-  document.getElementById("resultCounts").innerText =
-    `병종별 병사 수\n방패 ${Math.round(total*res.ratio.shield)}\n` +
-    `창 ${Math.round(total*res.ratio.spear)}\n` +
-    `궁 ${Math.round(total*res.ratio.archer)}`;
-
-  const verdict = res.score >= 1.05 ? "여유 승" :
-                  res.score >= 0.95 ? "박빙" : "불리";
-
-  document.getElementById("resultVerdict").innerText =
-    `판정: ${verdict} (지표 ${res.score.toFixed(2)})`;
-
-  document.getElementById("resultSummary").innerText =
-    `추천: 방패 ${(res.ratio.shield*100).toFixed(1)}% / `
-    + `창 ${(res.ratio.spear*100).toFixed(1)}% / `
-    + `궁 ${(res.ratio.archer*100).toFixed(1)}% (${verdict})`;
-}
