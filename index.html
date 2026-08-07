@@ -3,7 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>8월 첫째주 KOR Buff 나눔</title>
+    <title>8월 첫째주 KOR Buff 나눔 (실시간 동기화)</title>
+    <!-- Firebase SDK v9+ (CDN) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // ==========================================
+        // 1. 본인의 Firebase 설정 정보로 변경해주세요
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const data = {
+            kor: ["Chew Rat", "GoodSpeed", "귀염시우", "숭이랜드", "춘식이", "Onion Uncle", "너구리 Raccoon", "Dokdo 새우", "Subbing Warrior", "rara"],
+            one: ["ꁲʅԃυɯιɳ", "AKODATᵀᴿ", "Powel", "메t҉e҉u҉t҉t҉z҉u҉메", "Horus ꫂ ၴႅ༊ᴹᵒᵒᵈʸ", "Ꮇѻѻɖყ ꫂ ၴႅ༊ᴴᵒʳᵘˢ", "Hulk", "Sloofa", "Adler", "Yahya", "RAGNAR", "Ali", "Chaos", "Voly"],
+            cos: ["PINAR", "Ahmett", "ERTUGRUL BEY", "ORHAN GAZI", "Ferre", "Amorla", "Xbaika", "Muhammed68", "Bajocero", "Mixover", "Bo"],
+            w4r: ["꒰ঌ Lunatic ໒꒱", "LETHAL RAMBO", "Tokito Toyoto", "Queen Larissa", "Buttercup", "༆Naughty༒XENA༆", "MrV", "// F A R E S //", "VEL313༆Naughty༒XENA༆", "ᘓ᭄ᎮᖇꪱꫜᏟᥱ֟፝᥉᥉_ꫝꫜꪱ", "RIAD", "⸸Vargsmål⑧", "Zipi", "jess"]
+        };
+
+        let remoteState = {};
+
+        // UI 초기 생성
+        function initUI() {
+            Object.keys(data).forEach(groupKey => {
+                const container = document.getElementById(`list-${groupKey}`);
+                container.innerHTML = "";
+                data[groupKey].forEach((name, index) => {
+                    const id = `${groupKey}-${index}`;
+                    const li = document.createElement("li");
+                    li.innerHTML = `
+                        <input type="checkbox" id="${id}">
+                        <label class="item-label" for="${id}">
+                            <div class="checkbox-custom"></div>
+                            <span class="item-text">${name}</span>
+                        </label>
+                    `;
+                    container.appendChild(li);
+
+                    // 이벤트 리스너 추가
+                    const checkbox = li.querySelector(`input`);
+                    checkbox.addEventListener('change', () => {
+                        toggleCheck(id, checkbox.checked);
+                    });
+                });
+            });
+        }
+
+        // DB에 상태 반영
+        function toggleCheck(id, isChecked) {
+            set(ref(db, 'checklist/' + id), isChecked);
+        }
+
+        // 리셋 기능
+        window.resetAll = function() {
+            if (confirm("모든 사람의 체크 상태를 초기화하시겠습니까?")) {
+                set(ref(db, 'checklist'), null);
+            }
+        };
+
+        // Firebase 실시간 수신
+        const checklistRef = ref(db, 'checklist');
+        onValue(checklistRef, (snapshot) => {
+            remoteState = snapshot.val() || {};
+            
+            Object.keys(data).forEach(groupKey => {
+                let checkedCount = 0;
+                data[groupKey].forEach((_, index) => {
+                    const id = `${groupKey}-${index}`;
+                    const isChecked = !!remoteState[id];
+                    const checkbox = document.getElementById(id);
+                    if (checkbox) {
+                        checkbox.checked = isChecked;
+                    }
+                    if (isChecked) checkedCount++;
+                });
+                document.getElementById(`count-${groupKey}`).innerText = `${checkedCount}/${data[groupKey].length}`;
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", initUI);
+    </script>
     <style>
         :root {
             --bg-color: #f4f6f9;
@@ -198,11 +288,10 @@
 
     <header>
         <h1>8월 첫째주 KOR Buff 나눔</h1>
-        <div class="subtitle">* 1개씩 / 이름 전체 터치 가능</div>
+        <div class="subtitle">* 실시간 공유 / 터치 및 취소선 지원</div>
     </header>
 
     <div class="grid-container">
-        <!-- KOR -->
         <div class="group-card group-kor">
             <div class="group-header">
                 <span>KOR</span>
@@ -211,7 +300,6 @@
             <ul class="item-list" id="list-kor"></ul>
         </div>
 
-        <!-- ONE -->
         <div class="group-card group-one">
             <div class="group-header">
                 <span>ONE</span>
@@ -220,7 +308,6 @@
             <ul class="item-list" id="list-one"></ul>
         </div>
 
-        <!-- COS -->
         <div class="group-card group-cos">
             <div class="group-header">
                 <span>COS</span>
@@ -229,7 +316,6 @@
             <ul class="item-list" id="list-cos"></ul>
         </div>
 
-        <!-- W4R -->
         <div class="group-card group-w4r">
             <div class="group-header">
                 <span>W4R</span>
@@ -241,66 +327,5 @@
 
     <button class="reset-btn" onclick="resetAll()">전체 체크 해제 (초기화)</button>
 
-    <script>
-        const data = {
-            kor: ["Chew Rat", "GoodSpeed", "귀염시우", "숭이랜드", "춘식이", "Onion Uncle", "너구리 Raccoon", "Dokdo 새우", "Subbing Warrior", "rara"],
-            one: ["ꁲʅԃυɯιɳ", "AKODATᵀᴿ", "Powel", "메t҉e҉u҉t҉t҉z҉u҉메", "Horus ꫂ ၴႅ༊ᴹᵒᵒᵈʸ", "Ꮇѻѻɖყ ꫂ ၴႅ༊ᴴᵒʳᵘˢ", "Hulk", "Sloofa", "Adler", "Yahya", "RAGNAR", "Ali", "Chaos", "Voly"],
-            cos: ["PINAR", "Ahmett", "ERTUGRUL BEY", "ORHAN GAZI", "Ferre", "Amorla", "Xbaika", "Muhammed68", "Bajocero", "Mixover", "Bo"],
-            w4r: ["꒰ঌ Lunatic ໒꒱", "LETHAL RAMBO", "Tokito Toyoto", "Queen Larissa", "Buttercup", "༆Naughty༒XENA༆", "MrV", "// F A R E S //", "VEL313༆Naughty༒XENA༆", "ᘓ᭄ᎮᖇꪱꫜᏟᥱ֟፝᥉᥉_ꫝꫜꪱ", "RIAD", "⸸Vargsmål⑧", "Zipi", "jess"]
-        };
-
-        function renderGroup(groupKey) {
-            const container = document.getElementById(`list-${groupKey}`);
-            const items = data[groupKey];
-            container.innerHTML = "";
-
-            items.forEach((name, index) => {
-                const id = `${groupKey}-${index}`;
-                const isChecked = localStorage.getItem(id) === "true";
-
-                const li = document.createElement("li");
-                li.innerHTML = `
-                    <input type="checkbox" id="${id}" ${isChecked ? "checked" : ""} onchange="toggleCheck('${id}', '${groupKey}')">
-                    <label class="item-label" for="${id}">
-                        <div class="checkbox-custom"></div>
-                        <span class="item-text">${name}</span>
-                    </label>
-                `;
-                container.appendChild(li);
-            });
-
-            updateCount(groupKey);
-        }
-
-        function toggleCheck(id, groupKey) {
-            const checkbox = document.getElementById(id);
-            localStorage.setItem(id, checkbox.checked);
-            updateCount(groupKey);
-        }
-
-        function updateCount(groupKey) {
-            const items = data[groupKey];
-            let checkedCount = 0;
-
-            items.forEach((_, index) => {
-                const id = `${groupKey}-${index}`;
-                if (localStorage.getItem(id) === "true") {
-                    checkedCount++;
-                }
-            });
-
-            document.getElementById(`count-${groupKey}`).innerText = `${checkedCount}/${items.length}`;
-        }
-
-        function resetAll() {
-            if (confirm("모든 체크를 초기화하시겠습니까?")) {
-                localStorage.clear();
-                Object.keys(data).forEach(groupKey => renderGroup(groupKey));
-            }
-        }
-
-        // Initialize
-        Object.keys(data).forEach(groupKey => renderGroup(groupKey));
-    </script>
 </body>
 </html>
