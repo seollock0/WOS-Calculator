@@ -1,124 +1,306 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>WOS 전투 최적화 계산기</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8월 첫째주 KOR Buff 나눔</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --border-color: #e2e8f0;
+            --accent-kor: #3b82f6;
+            --accent-one: #10b981;
+            --accent-cos: #f59e0b;
+            --accent-w4r: #8b5cf6;
+        }
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 16px 12px 40px 12px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 600px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .group-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .group-kor .group-header { color: var(--accent-kor); border-bottom-color: var(--accent-kor); }
+        .group-one .group-header { color: var(--accent-one); border-bottom-color: var(--accent-one); }
+        .group-cos .group-header { color: var(--accent-cos); border-bottom-color: var(--accent-cos); }
+        .group-w4r .group-header { color: var(--accent-w4r); border-bottom-color: var(--accent-w4r); }
+
+        .count-badge {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background-color: #f1f5f9;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .item-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .item-label {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .item-label:active {
+            transform: scale(0.98);
+            background: #f1f5f9;
+        }
+
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .checkbox-custom::after {
+            content: "✓";
+            font-weight: bold;
+            font-size: 14px;
+            color: #fff;
+            display: none;
+        }
+
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        /* Checked State */
+        input[type="checkbox"]:checked + .item-label {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        input[type="checkbox"]:checked + .item-label .checkbox-custom {
+            background-color: #64748b;
+            border-color: #64748b;
+        }
+
+        input[type="checkbox"]:checked + .item-label .checkbox-custom::after {
+            display: block;
+        }
+
+        input[type="checkbox"]:checked + .item-label .item-text {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+
+        .item-text {
+            font-size: 0.95rem;
+            font-weight: 500;
+            word-break: break-all;
+            color: #334155;
+        }
+
+        .reset-btn {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: #e2e8f0;
+            color: #475569;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .reset-btn:active {
+            background: #cbd5e1;
+        }
+    </style>
 </head>
 <body>
 
-<h1>🔥 WOS 전투 최적화 계산기</h1>
-<p class="subtitle">실전 스탯 + 적 병력 구성 반영</p>
+    <header>
+        <h1>8월 첫째주 KOR Buff 나눔</h1>
+        <div class="subtitle">* 1개씩 / 이름 전체 터치 가능</div>
+    </header>
 
-<section class="card">
-  <label>
-    <input type="checkbox" id="enemyDefense" checked>
-    적이 수성 중인가요?
-  </label>
-</section>
+    <div class="grid-container">
+        <!-- KOR -->
+        <div class="group-card group-kor">
+            <div class="group-header">
+                <span>KOR</span>
+                <span class="count-badge" id="count-kor">0/10</span>
+            </div>
+            <ul class="item-list" id="list-kor"></ul>
+        </div>
 
-<!-- ================= 아군 ================= -->
-<section class="card">
-  <h2>아군</h2>
+        <!-- ONE -->
+        <div class="group-card group-one">
+            <div class="group-header">
+                <span>ONE</span>
+                <span class="count-badge" id="count-one">0/14</span>
+            </div>
+            <ul class="item-list" id="list-one"></ul>
+        </div>
 
-  <label>
-    총 병사 수
-    <input id="our_total" placeholder="예: 1200000">
-  </label>
+        <!-- COS -->
+        <div class="group-card group-cos">
+            <div class="group-header">
+                <span>COS</span>
+                <span class="count-badge" id="count-cos">0/11</span>
+            </div>
+            <ul class="item-list" id="list-cos"></ul>
+        </div>
 
-  <h3>아군 병종별 최종 스탯 (%)</h3>
-  <div class="grid">
-    <div class="branch">
-      <h4>방패병</h4>
-      <input id="our_shield_atk" placeholder="공격력">
-      <input id="our_shield_def" placeholder="방어력">
-      <input id="our_shield_pow" placeholder="파괴력">
-      <input id="our_shield_hp"  placeholder="HP">
-      <select id="our_shield_hero"></select>
+        <!-- W4R -->
+        <div class="group-card group-w4r">
+            <div class="group-header">
+                <span>W4R</span>
+                <span class="count-badge" id="count-w4r">0/14</span>
+            </div>
+            <ul class="item-list" id="list-w4r"></ul>
+        </div>
     </div>
 
-    <div class="branch">
-      <h4>창병</h4>
-      <input id="our_spear_atk">
-      <input id="our_spear_def">
-      <input id="our_spear_pow">
-      <input id="our_spear_hp">
-      <select id="our_spear_hero"></select>
-    </div>
+    <button class="reset-btn" onclick="resetAll()">전체 체크 해제 (초기화)</button>
 
-    <div class="branch">
-      <h4>궁병</h4>
-      <input id="our_archer_atk">
-      <input id="our_archer_def">
-      <input id="our_archer_pow">
-      <input id="our_archer_hp">
-      <select id="our_archer_hero"></select>
-    </div>
-  </div>
-</section>
+    <script>
+        const data = {
+            kor: ["Chew Rat", "GoodSpeed", "귀염시우", "숭이랜드", "춘식이", "Onion Uncle", "너구리 Raccoon", "Dokdo 새우", "Subbing Warrior", "rara"],
+            one: ["ꁲʅԃυɯιɳ", "AKODATᵀᴿ", "Powel", "메t҉e҉u҉t҉t҉z҉u҉메", "Horus ꫂ ၴႅ༊ᴹᵒᵒᵈʸ", "Ꮇѻѻɖყ ꫂ ၴႅ༊ᴴᵒʳᵘˢ", "Hulk", "Sloofa", "Adler", "Yahya", "RAGNAR", "Ali", "Chaos", "Voly"],
+            cos: ["PINAR", "Ahmett", "ERTUGRUL BEY", "ORHAN GAZI", "Ferre", "Amorla", "Xbaika", "Muhammed68", "Bajocero", "Mixover", "Bo"],
+            w4r: ["꒰ঌ Lunatic ໒꒱", "LETHAL RAMBO", "Tokito Toyoto", "Queen Larissa", "Buttercup", "༆Naughty༒XENA༆", "MrV", "// F A R E S //", "VEL313༆Naughty༒XENA༆", "ᘓ᭄ᎮᖇꪱꫜᏟᥱ֟፝᥉᥉_ꫝꫜꪱ", "RIAD", "⸸Vargsmål⑧", "Zipi", "jess"]
+        };
 
-<!-- ================= 적 ================= -->
-<section class="card">
-  <h2>적</h2>
+        function renderGroup(groupKey) {
+            const container = document.getElementById(`list-${groupKey}`);
+            const items = data[groupKey];
+            container.innerHTML = "";
 
-  <h3>적 병종별 병사 수</h3>
-  <div class="grid">
-    <div class="branch">
-      <h4>방패병</h4>
-      <input id="enemy_shield_cnt" placeholder="병사 수">
-    </div>
-    <div class="branch">
-      <h4>창병</h4>
-      <input id="enemy_spear_cnt">
-    </div>
-    <div class="branch">
-      <h4>궁병</h4>
-      <input id="enemy_archer_cnt">
-    </div>
-  </div>
+            items.forEach((name, index) => {
+                const id = `${groupKey}-${index}`;
+                const isChecked = localStorage.getItem(id) === "true";
 
-  <h3>적 병종별 최종 스탯 (%)</h3>
-  <div class="grid">
-    <div class="branch">
-      <h4>방패병</h4>
-      <input id="enemy_shield_atk">
-      <input id="enemy_shield_def">
-      <input id="enemy_shield_pow">
-      <input id="enemy_shield_hp">
-      <select id="enemy_shield_hero"></select>
-    </div>
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <input type="checkbox" id="${id}" ${isChecked ? "checked" : ""} onchange="toggleCheck('${id}', '${groupKey}')">
+                    <label class="item-label" for="${id}">
+                        <div class="checkbox-custom"></div>
+                        <span class="item-text">${name}</span>
+                    </label>
+                `;
+                container.appendChild(li);
+            });
 
-    <div class="branch">
-      <h4>창병</h4>
-      <input id="enemy_spear_atk">
-      <input id="enemy_spear_def">
-      <input id="enemy_spear_pow">
-      <input id="enemy_spear_hp">
-      <select id="enemy_spear_hero"></select>
-    </div>
+            updateCount(groupKey);
+        }
 
-    <div class="branch">
-      <h4>궁병</h4>
-      <input id="enemy_archer_atk">
-      <input id="enemy_archer_def">
-      <input id="enemy_archer_pow">
-      <input id="enemy_archer_hp">
-      <select id="enemy_archer_hero"></select>
-    </div>
-  </div>
-</section>
+        function toggleCheck(id, groupKey) {
+            const checkbox = document.getElementById(id);
+            localStorage.setItem(id, checkbox.checked);
+            updateCount(groupKey);
+        }
 
-<button id="calcBtn">🚀 계산 실행</button>
+        function updateCount(groupKey) {
+            const items = data[groupKey];
+            let checkedCount = 0;
 
-<section class="card" id="resultBox" hidden>
-  <h2>✅ 결과</h2>
-  <pre id="resultText"></pre>
-</section>
+            items.forEach((_, index) => {
+                const id = `${groupKey}-${index}`;
+                if (localStorage.getItem(id) === "true") {
+                    checkedCount++;
+                }
+            });
 
-<script src="app.js"></script>
+            document.getElementById(`count-${groupKey}`).innerText = `${checkedCount}/${items.length}`;
+        }
+
+        function resetAll() {
+            if (confirm("모든 체크를 초기화하시겠습니까?")) {
+                localStorage.clear();
+                Object.keys(data).forEach(groupKey => renderGroup(groupKey));
+            }
+        }
+
+        // Initialize
+        Object.keys(data).forEach(groupKey => renderGroup(groupKey));
+    </script>
 </body>
 </html>
